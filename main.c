@@ -35,27 +35,33 @@ char *lsh_read_line(void)
     char *buffer = malloc(sizeof(char) * bufsize);
     int c;
 
-    if(!buffer){
+    if(!buffer)
+    {
         fprintf(stderr, "lsh: allocation error\n");
         exit(EXIT_FAILURE);
     }
 
-    while(1){
+    while(1)
+    {
         c = getchar();
 
-        if (c == EOF || c == '\n'){
+        if (c == EOF || c == '\n')
+        {
             buffer[position] = '\0';
             return buffer;
         }
-        else {
+        else 
+        {
             buffer[position] = c;
         }
         position++;
 
-        if (position >= bufsize) {
+        if (position >= bufsize) 
+        {
             bufsize += LSH_RL_BUFSIZE;
             buffer = realloc(buffer, bufsize);
-            if (!buffer){
+            if (!buffer)
+            {
                 fprintf(stderr, "lsh: allocation error\n");
                 exit(EXIT_FAILURE);
             }
@@ -102,4 +108,30 @@ char **lsh_split_line(char *line)
     return tokens;
 }
 
+int lsh_launch(char **args)
+{
+    pid_t pid, wpid;
+    int status;
+
+    pid = fork();
+    if (pid ==0) {
+        if (execvp(args[0], args) == -1)
+        {
+            perror("lsh");
+        }
+        exit(EXIT_FAILURE);
+    }
+    else if (pid < 0)
+    {
+        perror("lsh");
+    }
+    else
+    {
+        do
+        {
+            wpid = waitpid(pid, &status, WUNTRACED);
+        } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+    }
+    return 1;
+}
 
