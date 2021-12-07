@@ -89,9 +89,10 @@ char **lsh_split_line(char *line)
         {
             bufsize += LSH_TOK_BUFSIZE;
             tokens = realloc(tokens, bufsize * sizeof(char*));
-            if (!tokens){
-            fprintf(stderr, "lsh: allocation error\n");
-            exit(EXIT_FAILURE);
+            if (!tokens)
+            {
+                fprintf(stderr, "lsh: allocation error\n");
+                exit(EXIT_FAILURE);
             }
         }   
 
@@ -100,3 +101,5 @@ char **lsh_split_line(char *line)
     tokens[position] = NULL;
     return tokens;
 }
+
+
